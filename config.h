@@ -33,7 +33,7 @@ The configuration file for DCC-EX Command Station
 //   For example MY_SHIELD with display name "MINE":
 //   (remove comment start and end marker if you want to edit and use that)
 
-#define MY_SHIELD F("4XDRV8874"),\
+#define QUADRV8874_SHIELD F("QUADRV8874_SHIELD"),\
   new MotorDriver(25,  0, UNUSED_PIN, -14, 34, 2.23, 5000, 19), \
   new MotorDriver(27, 15, UNUSED_PIN,  -2, 35, 2.23, 5000, 23), \
   new MotorDriver(26,  5, UNUSED_PIN,  -13, 36, 2.23, 5000, 18), \
@@ -59,7 +59,7 @@ The configuration file for DCC-EX Command Station
 //   +-----------------------v
 //
 //#define MOTOR_SHIELD_TYPE STANDARD_MOTOR_SHIELD
-#define MOTOR_SHIELD_TYPE 4XDRV8874
+#define MOTOR_SHIELD_TYPE QUADRV8874_SHIELD
 /////////////////////////////////////////////////////////////////////////////////////
 //
 // If you want to restrict the maximum current LOWER than what your
@@ -109,13 +109,13 @@ The configuration file for DCC-EX Command Station
 // The AP mode password must be at least 8 characters long.
 //
 // Your SSID may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_SSID "Your network name"
+#define WIFI_SSID "SecurityWPA"
 //
 // WIFI_PASSWORD is the network password for your home network or if
 // you want to change the password from default AP mode password
 // to the AP password you want. 
 // Your password may not contain ``"'' (double quote, ASCII 0x22).
-#define WIFI_PASSWORD "Your network passwd"
+#define WIFI_PASSWORD "FFBJ3I39CRQ0X72CUHO8"
 //
 // WIFI_HOSTNAME: You can change this if you have more than one
 // CS to make them show up with different names on the network.
@@ -161,7 +161,7 @@ The configuration file for DCC-EX Command Station
 //OR define OLED_DRIVER width,height[,address] in pixels (address auto detected if not supplied)
 // 128x32 or 128x64 I2C SSD1306-based devices are supported.
 // Use 132,64 for a SH1106-based I2C device with a 128x64 display.
-// #define OLED_DRIVER 0x3c,128,32
+#define OLED_DRIVER 0x3c,128,32
 
 // Define scroll mode as 0, 1 or 2
 //  *  #define SCROLLMODE 0 is scroll continuous (fill screen if poss),
