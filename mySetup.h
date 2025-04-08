@@ -1,1 +1,1 @@
-I2CManager.forceClock(100000);
+I2CManager.forceClock(10000);
