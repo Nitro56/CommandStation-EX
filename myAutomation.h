@@ -29,3 +29,4 @@ SET_TRACK(B,MAIN_AUTO)
 SET_TRACK(C,MAIN_AUTO)
 SET_TRACK(D,PROG)
 DONE     // This just ends the startup thread, leaving 2 others running.
+ 

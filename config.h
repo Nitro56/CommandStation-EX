@@ -39,7 +39,6 @@ The configuration file for DCC-EX Command Station
   new MotorDriver(26,  5, UNUSED_PIN,  -13, 36, 2.23, 5000, 18), \
   new MotorDriver(16,  4, UNUSED_PIN,  -12, 39, 2.23, 5000, 17)
 
-
 /////////////////////////////////////////////////////////////////////////////////////
 //  NOTE: Before connecting these boards and selecting one in this software
 //        check the quick install guides!!! Some of these boards require a voltage
