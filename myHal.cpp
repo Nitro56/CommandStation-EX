@@ -287,7 +287,7 @@ void halSetup() {
   //
   // Note that the I2C address is defined in the EX-Turntable code, and 0x60 is the default.
 
-  //EXTurntable::create(600, 1, 0x60);
+  EXTurntable::create(600, 1, 0x60);
 
 
   //=======================================================================
