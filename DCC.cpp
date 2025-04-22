@@ -523,6 +523,7 @@ const ackOp FLASH LOCO_ID_PROG[] = {
       V0, WACK, MERGE,
       V0, WACK, MERGE,
       VB, WACK, NAKSKIP, // bad read of cv20, assume its 0 
+      BAD20SKIP,     // detect invalid cv20 value and ignore 
       STASHLOCOID,   // keep cv 20 until we have cv19 as well.
       SETCV, (ackOp)19, 
       STARTMERGE,           // Setup to read cv 19
@@ -628,7 +629,9 @@ const ackOp FLASH CONSIST_ID_PROG[] = {
       BASELINE,
       SETCV,(ackOp)20,
       SETBYTEH,    // high byte to CV 20
-      WB,WACK,     // ignore dedcoder without cv20 support
+      WB,WACK,ITSKIP,
+      FAIL_IF_NONZERO_NAK, // fail if writing long address to decoder that cant support it
+      SKIPTARGET,
       SETCV,(ackOp)19,
       SETBYTEL,   // low byte of word
       WB,WACK,ITC1,   // If ACK, we are done - callback(1) means Ok
@@ -759,7 +762,15 @@ void DCC::issueReminders() {
   if (!DCCWaveform::mainTrack.isReminderWindowOpen()) return;
   // Move to next loco slot.  If occupied, send a reminder.
   int reg = lastLocoReminder+1;
-  if (reg > highestUsedReg) reg = 0;  // Go to start of table
+  if (reg > highestUsedReg) {
+    if (loopStatus == 0 /*only needed if numLocos == 1 but we do not have a counter*/) {
+      // insert idle packet in the speed packet loop to fullfill the *censored*
+      // >5ms between packets to same decoder rule
+      const byte idlepacket[] = {0xFF, 0x00};
+      DCCWaveform::mainTrack.schedulePacket(idlepacket, 2, 0);
+    }
+    reg = 0;  // Go to start of table
+  }
   if (speedTable[reg].loco > 0) {
     // have found loco to remind
     if (issueReminder(reg))
@@ -780,40 +791,23 @@ bool DCC::issueReminder(int reg) {
          break;
        case 1: // remind function group 1 (F0-F4)
           if (flags & FN_GROUP_1)
-#ifndef DISABLE_FUNCTION_REMINDERS
 	    setFunctionInternal(loco,0, 128 | ((functions>>1)& 0x0F) | ((functions & 0x01)<<4),0); // 100D DDDD
-#else
-	    setFunctionInternal(loco,0, 128 | ((functions>>1)& 0x0F) | ((functions & 0x01)<<4),2);
-          flags&= ~FN_GROUP_1;  // dont send them again
-#endif
           break;
        case 2: // remind function group 2 F5-F8
           if (flags & FN_GROUP_2)
-#ifndef DISABLE_FUNCTION_REMINDERS
   	    setFunctionInternal(loco,0, 176 | ((functions>>5)& 0x0F),0);                           // 1011 DDDD
-#else
-	    setFunctionInternal(loco,0, 176 | ((functions>>5)& 0x0F),2);
-          flags&= ~FN_GROUP_2;  // dont send them again
-#endif
           break;
        case 3: // remind function group 3 F9-F12
           if (flags & FN_GROUP_3)
-#ifndef DISABLE_FUNCTION_REMINDERS
 	    setFunctionInternal(loco,0, 160 | ((functions>>9)& 0x0F),0);                           // 1010 DDDD
-#else
-	    setFunctionInternal(loco,0, 160 | ((functions>>9)& 0x0F),2);
-          flags&= ~FN_GROUP_3;  // dont send them again
-#endif
           break;
        case 4: // remind function group 4 F13-F20
           if (flags & FN_GROUP_4)
-	    setFunctionInternal(loco,222, ((functions>>13)& 0xFF),2);
-          flags&= ~FN_GROUP_4;  // dont send them again
+	    setFunctionInternal(loco,222, ((functions>>13)& 0xFF),0);
           break;
        case 5: // remind function group 5 F21-F28
           if (flags & FN_GROUP_5)
-	    setFunctionInternal(loco,223, ((functions>>21)& 0xFF),2);
-          flags&= ~FN_GROUP_5;  // dont send them again
+	    setFunctionInternal(loco,223, ((functions>>21)& 0xFF),0);
           break;
       }
       loopStatus++;
